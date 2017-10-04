@@ -16,8 +16,6 @@ namespace Web.AmazingLadies.Helpers.APIs.SunDwarf
         static OverwatchAPI()
         {
             client.BaseAddress = new Uri("https://owapi.net/");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         public async Task<RootObject> GetOverwatchProfile(string name, int tag)

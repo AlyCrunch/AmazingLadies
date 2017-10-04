@@ -22,7 +22,7 @@ namespace Web.AmazingLadies.Controllers
         {
             var ladies = GetLadiesSample();
 
-            ladies = await UpdateLadies(ladies);
+            //ladies = await UpdateLadies(ladies);
 
             ViewData["Ladies"] = ladies;
             return View();
