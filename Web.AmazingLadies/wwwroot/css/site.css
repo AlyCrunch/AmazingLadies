@@ -33,3 +33,18 @@
         display: none;
     }
 }
+
+.containerRoles {
+    height: 20px;
+    overflow: hidden;
+}
+
+.role {
+    width: 20px;
+    fill: lightgray;
+    display: inline-block;
+}
+
+.activeRole {
+    fill: black;
+}

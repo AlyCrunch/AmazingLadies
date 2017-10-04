@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Web.AmazingLadies.Models.LadyModel>
+@{
+    ViewData["Title"] = "Amazing Ladies Overwatch";
+}
+<h2>ListAllLadies</h2>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nickname)
+            </th>
+            <th>
+                BattleTag
+            </th>
+            <th>
+                Season Rating
+            </th>
+            <th>
+                Roles
+            </th>
+            <th>
+                Preference
+            </th>
+            <th>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var lady in ViewData["Ladies"] as List<LadyModel>)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => lady.Nickname)
+                </td>
+                <td>
+                    @Html.DisplayName(lady.Overwatch.GetBattleTag())
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => lady.Overwatch.SR)
+                </td>
+                <td>
+                    <div class="containerRoles">
+                        <span class="role @if (lady.Overwatch.Roles.DPS) { @Html.Raw("activeRole") }">
+                            @Html.Partial("~/Content/Icons/DPS.cshtml")
+                        </span>
+                        <span class="role @if (lady.Overwatch.Roles.Tank) { @Html.Raw("activeRole") }">
+                            @Html.Partial("~/Content/Icons/Tank.cshtml")
+                        </span>
+                        <span class="role @if (lady.Overwatch.Roles.Support) { @Html.Raw("activeRole") }">
+                            @Html.Partial("~/Content/Icons/Support.cshtml")
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    @foreach (var mode in lady.Overwatch.Modes)
+                    {
+                        <span class="badge badge-pill badge-info">@Html.Raw(mode.ToString("g"))</span>
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { lady.ID }) |
+                    @Html.ActionLink("Details", "Details", new { lady.ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { lady.ID })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
