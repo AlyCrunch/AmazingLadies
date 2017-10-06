@@ -2,13 +2,11 @@
 @{
     ViewData["Title"] = "Amazing Ladies Overwatch";
 }
-<h2>ListAllLadies</h2>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
+            <th>
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Nickname)
             </th>
@@ -24,8 +22,6 @@
             <th>
                 Preference
             </th>
-            <th>
-            </th>
         </tr>
     </thead>
     <tbody>
@@ -33,37 +29,43 @@
         {
             <tr>
                 <td>
+                    <span>@Html.Partial("~/Content/Icons/Details.cshtml")</span>
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(lady.Overwatch.Avatar))
+                    {
+                        <img src="@Url.Content(lady.Overwatch.Avatar)" class="avatarList rounded-circle" />
+                    }
                     @Html.DisplayFor(modelItem => lady.Nickname)
                 </td>
                 <td>
-                    @Html.DisplayName(lady.Overwatch.GetBattleTag())
+                    <a href="@Html.Raw(lady.Overwatch.GetPlayOverwatchUrl())" target="_blank"> @Html.DisplayName(lady.Overwatch.BattleTag.Full) </a>
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => lady.Overwatch.SR)
+                    <img class="rankImg" src="@Url.Content(lady.Overwatch.Rank.Image)" alt="@Html.Raw(lady.Overwatch.Rank.Name)" />
+                    @Html.DisplayFor(modelItem => lady.Overwatch.Rank.SR)
                 </td>
                 <td>
-                    <div class="containerRoles">
-                        <span class="role @if (lady.Overwatch.Roles.DPS) { @Html.Raw("activeRole") }">
-                            @Html.Partial("~/Content/Icons/DPS.cshtml")
-                        </span>
-                        <span class="role @if (lady.Overwatch.Roles.Tank) { @Html.Raw("activeRole") }">
-                            @Html.Partial("~/Content/Icons/Tank.cshtml")
-                        </span>
-                        <span class="role @if (lady.Overwatch.Roles.Support) { @Html.Raw("activeRole") }">
-                            @Html.Partial("~/Content/Icons/Support.cshtml")
-                        </span>
-                    </div>
+                    <span class="role @if (lady.Overwatch.Roles.DPS) { @Html.Raw("activeIcon") }">
+                        @Html.Partial("~/Content/Icons/DPS.cshtml")
+                    </span>
+                    <span class="role @if (lady.Overwatch.Roles.Tank) { @Html.Raw("activeIcon") }">
+                        @Html.Partial("~/Content/Icons/Tank.cshtml")
+                    </span>
+                    <span class="role @if (lady.Overwatch.Roles.Support) { @Html.Raw("activeIcon") }">
+                        @Html.Partial("~/Content/Icons/Support.cshtml")
+                    </span>
                 </td>
                 <td>
-                    @foreach (var mode in lady.Overwatch.Modes)
-                    {
-                        <span class="badge badge-pill badge-info">@Html.Raw(mode.ToString("g"))</span>
-                    }
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { lady.ID }) |
-                    @Html.ActionLink("Details", "Details", new { lady.ID }) |
-                    @Html.ActionLink("Delete", "Delete", new { lady.ID })
+                    <span class="role @if (lady.Overwatch.Modes.Competitive) { @Html.Raw("activeIcon") }">
+                        @Html.Partial("~/Content/Icons/Competitive.cshtml")
+                    </span>
+                    <span class="role @if (lady.Overwatch.Modes.Quick) { @Html.Raw("activeIcon") }">
+                        @Html.Partial("~/Content/Icons/Quick.cshtml")
+                    </span>
+                    <span class="role @if (lady.Overwatch.Modes.Arcade) { @Html.Raw("activeIcon") }">
+                        @Html.Partial("~/Content/Icons/Arcade.cshtml")
+                    </span>
                 </td>
             </tr>
         }

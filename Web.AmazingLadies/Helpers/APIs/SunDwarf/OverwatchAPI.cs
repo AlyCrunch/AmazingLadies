@@ -16,6 +16,7 @@ namespace Web.AmazingLadies.Helpers.APIs.SunDwarf
         static OverwatchAPI()
         {
             client.BaseAddress = new Uri("https://owapi.net/");
+            client.DefaultRequestHeaders.Add("User-Agent", "Aly4EVER");
         }
 
         public async Task<RootObject> GetOverwatchProfile(string name, int tag)
@@ -25,7 +26,7 @@ namespace Web.AmazingLadies.Helpers.APIs.SunDwarf
             if (response.IsSuccessStatusCode)
             {
                 var json = response.Content.ReadAsStringAsync().Result;
-                var m = JsonConvert.DeserializeObject<RootObject>(json);
+                product = JsonConvert.DeserializeObject<RootObject>(json);
             }
             return product;
         }

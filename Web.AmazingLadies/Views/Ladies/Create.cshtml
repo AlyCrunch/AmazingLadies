@@ -1,0 +1,138 @@
+﻿@model Web.AmazingLadies.Models.LadyModel
+@{
+    ViewData["Title"] = "Amazing Ladies Overwatch";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>NewLady</title>
+</head>
+<body>
+    <div class="container">
+        <form asp-action="NewLady">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="Nickname" class="control-label"></label>
+                        <input asp-for="Nickname" class="form-control" />
+                        <span asp-validation-for="Nickname" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label for="DiscordAccount">Discord</label>
+                        <div class="form-inline">
+                            <label class="sr-only" for="NameDiscord">Name</label>
+                            <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="NameDiscord" placeholder="Zenyatta">
+                            <label class="sr-only" for="TagDiscord">Tag</label>
+                            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                <div class="input-group-addon">#</div>
+                                <input type="text" class="form-control" id="TagDiscord" placeholder="32152">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label for="inputTimeZone" class="col-form-label">TimeZone</label>
+                        @Html.Partial("~/Content/Snippets/TimeZoneSelect.cshtml")
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <fieldset class="scheduler-border">
+                    <legend class="scheduler-border"><span class="d-inline-block" style="width:20px">@Html.Partial("~/Content/Icons/OW.cshtml")</span></legend>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="BattleNetAccount">BattleTag</label>
+                                <div class="form-inline">
+                                    <label class="sr-only" for="BattleName">Name</label>
+                                    <input type="text" class="form-control mb-2 mr-sm-2 mb-sm-0" id="BattleName" placeholder="ZennyIsTheBest">
+                                    <label class="sr-only" for="BattleTag">Tag</label>
+                                    <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                        <div class="input-group-addon">#</div>
+                                        <input type="text" class="form-control" id="BattleTag" placeholder="1515">
+                                    </div>
+                                </div>
+                                <small id="BattleTagHelp" class="form-text text-muted">BattleTag is case sensitive.</small>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="SRInput">Season Rating</label>
+                                <input type="text" class="form-control" id="SRInput" placeholder="3250" aria-describedby="SRInputHelp">
+                                <small id="SRInputHelp" class="form-text text-muted">It will be updated automatically.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="BattleNetAccount">Server</label><br />
+                                <div class="btn-group" data-toggle="buttons" aria-describedby="ServerHelp">
+                                    <label class="btn btn-secondary active">
+                                        <input type="radio" name="options" id="US" autocomplete="off"> US
+                                    </label>
+                                    <label class="btn btn-secondary">
+                                        <input type="radio" name="options" id="EU" autocomplete="off"> EU
+                                    </label>
+                                    <label class="btn btn-secondary">
+                                        <input type="radio" name="options" id="KR" autocomplete="off"> KR
+                                    </label>
+                                </div>
+                                <small id="ServerHelp" class="form-text text-muted">Favorite server.</small>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="BattleNetAccount">Role(s)</label><br />
+                            <div class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-secondary">
+                                    <input type="checkbox" name="options" id="DPS" autocomplete="off"> DPS
+                                </label>
+                                <label class="btn btn-secondary">
+                                    <input type="checkbox" name="options" id="Tank" autocomplete="off"> Tank
+                                </label>
+                                <label class="btn btn-secondary">
+                                    <input type="checkbox" name="options" id="Support" autocomplete="off"> Support
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="BattleNetAccount">Mode(s)</label><br />
+                            <div class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-secondary">
+                                    <input type="checkbox" name="options" id="Competitive" autocomplete="off"> Competitive
+                                </label>
+                                <label class="btn btn-secondary">
+                                    <input type="checkbox" name="options" id="Quick" autocomplete="off"> Quick
+                                </label>
+                                <label class="btn btn-secondary">
+                                    <input type="checkbox" name="options" id="Arcade" autocomplete="off"> Arcade
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="NotesOverwatch">Notes</label>
+                                <textarea class="form-control" id="NotesOverwatch" aria-describedby="NotesOverwatchHelp" rows="3"></textarea>
+                                <small id="NotesOverwatchHelp" class="form-text text-muted">More informations, like : I'm a D.Va OTP or I have a 2k5 smurf : Symmetra#2310</small>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-default" />
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -16,9 +16,17 @@
   <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="Views\Shared\" />
-    <Folder Include="wwwroot\css\" />
-    <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\images\Ranks\rank-1.png" />
+    <None Include="wwwroot\images\Ranks\rank-2.png" />
+    <None Include="wwwroot\images\Ranks\rank-3.png" />
+    <None Include="wwwroot\images\Ranks\rank-4.png" />
+    <None Include="wwwroot\images\Ranks\rank-5.png" />
+    <None Include="wwwroot\images\Ranks\rank-6.png" />
+    <None Include="wwwroot\images\Ranks\rank-7.png" />
   </ItemGroup>
 
 </Project>

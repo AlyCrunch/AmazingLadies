@@ -1,24 +1,7 @@
-﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
-}
-
-/* Wrapping element */
-/* Set some basic padding to keep content from hitting the edges */
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
-/* Carousel */
+﻿/* Carousel */
 .carousel-caption p {
     font-size: 20px;
     line-height: 1.4;
-}
-
-/* Make .svg files in the carousel display properly in older browsers */
-.carousel-inner .item img[src$=".svg"] {
-    width: 100%;
 }
 
 /* QR code generator */
@@ -34,17 +17,50 @@
     }
 }
 
-.containerRoles {
-    height: 20px;
-    overflow: hidden;
-}
-
 .role {
     width: 20px;
     fill: lightgray;
     display: inline-block;
 }
 
-.activeRole {
+.activeIcon {
     fill: black;
+}
+
+.avatarList {
+    width: 30px;
+}
+
+@font-face {
+    font-family: "Overwatch Font";
+    src: url('big_noodle_titling.ttf');
+}
+
+@font-face {
+    font-family: "Overwatch Font";
+    font-style: italic;
+    src: url('big_noodle_titling_oblique.ttf');
+}
+
+
+.title {
+    font-family: "Overwatch Font", Helvetica, Arial, sans-serif;
+    font-style : italic;
+}
+
+.rankImg{
+    width: 25px;
+}
+legend.scheduler-border {
+    width: 40px; /* Or auto */
+    padding: 0 10px; /* To give a bit of padding on the left and right */
+    border-bottom: none;
+    border-color: lightgray;
+}
+fieldset.scheduler-border {
+    border: 1px groove #ddd;
+    border-color: lightgray;
+    width: 100%;
+    padding: 0 1.4em 1.4em 1.4em;
+    margin: 0 0 1.5em 0;
 }

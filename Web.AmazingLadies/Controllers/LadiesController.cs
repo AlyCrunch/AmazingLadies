@@ -28,6 +28,12 @@ namespace Web.AmazingLadies.Controllers
             return View();
         }
 
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+
         private List<LadyModel> GetLadiesSample()
         {
             return new List<LadyModel>()
@@ -35,31 +41,30 @@ namespace Web.AmazingLadies.Controllers
                 new LadyModel()
                 {
                     ID = 1,
-                    Nickname = "Crunchy",
-                    DiscordAccount = "Crunchy#2554",
+                    Nickname = "Crunch",
+                    Discord = new Discord(){ Name = "Crunchy", Tag = 2554},
+                    TimeZone = TimeZoneInfo.Local,
                     Overwatch = new OverwatchModel()
                     {
-                        BattleName = "Crunch",
-                        BattleTag = 2210,
-                        SR = 2801,
+                        BattleTag = new BattleTag(){ Name = "Crunch", Tag = 2210 },
+                        Rank = new Rank(){ SR = 2800 },
                         Server = ServersEnum.EU,
-                        Modes = new ModesEnum[] { ModesEnum.Arcade, ModesEnum.Competitive, ModesEnum.Quick },
+                        Modes = new ModesModel(){ Competitive = true, Arcade = true, Quick= true },
                         Roles = new RolesModel(){ DPS = false, Support = true, Tank = false },
                         Notes = "Loves playing Ana"
-                    }
+                    }                    
                 },
                 new LadyModel()
                 {
                     ID = 2,
                     Nickname = "QueenE",
-                    DiscordAccount = "QueenE#8106",
+                    Discord = new Discord(){ Name = "QueenE", Tag = 8106},
                     Overwatch = new OverwatchModel()
                     {
-                        BattleName = "QueenE",
-                        BattleTag = 2813 ,
-                        SR = 3600,
+                        BattleTag = new BattleTag(){ Name = "QueenE", Tag = 2813 },
+                        Rank = new Rank(){ SR = 3600 },
                         Server = ServersEnum.EU,
-                        Modes = new ModesEnum[] { ModesEnum.Competitive, ModesEnum.Quick },
+                        Modes = new ModesModel(){ Competitive = true, Arcade = false, Quick= true },
                         Roles = new RolesModel(){ DPS = true, Support = true, Tank = true },
                         Notes = "Loves Pizza"
                     }
@@ -71,15 +76,20 @@ namespace Web.AmazingLadies.Controllers
         {
             foreach (var lady in ladies)
             {
-                var obj = await OWAPI.GetOverwatchProfile(lady.Overwatch.BattleName, lady.Overwatch.BattleTag);
+                var obj = await OWAPI.GetOverwatchProfile(lady.Overwatch.BattleTag.Name, lady.Overwatch.BattleTag.Tag);
                 if (obj == null) return ladies;
+                var stats = new OverallStats();
 
                 switch(lady.Overwatch.Server.ToString())
                 {
-                    case "EU": lady.Overwatch.SR = obj.EU.Stats.Competitive.OverallStats.SR;break;
-                    case "NA": lady.Overwatch.SR = obj.US.Stats.Competitive.OverallStats.SR;break;
-                    case "KR": lady.Overwatch.SR = obj.KR.Stats.Competitive.OverallStats.SR;break;
+                    case "EU": stats = obj.EU.Stats.Competitive.OverallStats;break;
+                    case "US": stats = obj.US.Stats.Competitive.OverallStats;break;
+                    case "KR": stats = obj.KR.Stats.Competitive.OverallStats;break;
                 }
+
+                lady.Overwatch.Rank.SR = stats.SR;
+                lady.Overwatch.Avatar = stats.Avatar;
+                lady.Overwatch.FrameImage = stats.FrameLevel;
             }
             return ladies;
         }

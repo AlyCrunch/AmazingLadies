@@ -8,14 +8,25 @@ namespace Web.AmazingLadies.Models
 {
     public class OverwatchModel
     {
-        public string BattleName { get; set; }
-        public int BattleTag { get; set; }
-        public int SR { get; set; }
-        public ModesEnum[] Modes { get; set; }
+        static string playOWurl = "https://playoverwatch.com/en-us/career/pc/{0}/{1}-{2}";
+
+        public BattleTag BattleTag { get; set; }
+        public Rank Rank { get; set; }
+        public string FrameImage { get; set; }
+        public string Avatar { get; set; }
+        public ModesModel Modes { get; set; }
         public ServersEnum Server { get; set; }
         public RolesModel Roles { get; set; }
         public string Notes { get; set; }
 
-        public string GetBattleTag() => BattleName + "#" + BattleTag;
+        public string GetPlayOverwatchUrl() => string.Format(playOWurl, Server.ToString().ToLower(), BattleTag.Name, BattleTag.Tag);
     }
+
+    public class BattleTag
+    {
+        public string Name { get; set; }
+        public int Tag { get; set; }
+        public string Full { get => Name + "#" + Tag; private set { } }
+    }
+
 }
