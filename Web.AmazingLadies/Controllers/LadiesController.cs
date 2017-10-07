@@ -22,7 +22,7 @@ namespace Web.AmazingLadies.Controllers
             OWAPI = new OverwatchAPI();
         }
 
-        public IActionResult Index(string sortOrder, string serverString, string roleString, Dictionary<string, string> filters)
+        public IActionResult Index(string sortOrder, Dictionary<string, string> filters)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["SRSortParam"] = sortOrder == "SR" ? "SR_desc" : "SR";
@@ -39,6 +39,8 @@ namespace Web.AmazingLadies.Controllers
                                  .Include(l => l.Overwatch)
                                     .ThenInclude(o => o.Roles)
                                  .ToList();
+
+            ladies = FilteringLadies(filters, ladies);
 
             switch (sortOrder)
             {
@@ -62,6 +64,34 @@ namespace Web.AmazingLadies.Controllers
         public IActionResult Create()
         {
             return View();
+        }
+
+        private List<LadyModel> FilteringLadies(Dictionary<string, string> filters, List<LadyModel> ladies)
+        {
+            if (filters.Count == 0) return ladies;
+
+            var serverList = new List<string>();
+            if (filters.ContainsKey("s-u")) serverList.Add("US");
+            if (filters.ContainsKey("s-e")) serverList.Add("EU");
+            if (filters.ContainsKey("s-k")) serverList.Add("KR");
+            if (serverList.Count > 0 && serverList.Count < 3)
+                ladies = ladies.Where(s => serverList.Contains(s.Overwatch.Server.ToString())).ToList();
+
+            var roleList = new List<string>();
+            if (filters.ContainsKey("r-d")) roleList.Add("DPS");
+            if (filters.ContainsKey("r-t")) roleList.Add("TANK");
+            if (filters.ContainsKey("r-s")) roleList.Add("SUPPORT");
+            if (roleList.Count > 0 && roleList.Count < 3)
+                ladies = ladies.Where(r => r.Overwatch.Roles.HasAtLeastOneRole(string.Join('-', roleList))).ToList();
+
+            var modeList = new List<string>();
+            if (filters.ContainsKey("m-c")) modeList.Add("COMP");
+            if (filters.ContainsKey("m-q")) modeList.Add("QUICK");
+            if (filters.ContainsKey("m-a")) modeList.Add("ARCADE");
+            if (modeList.Count > 0 && modeList.Count < 3)
+                ladies = ladies.Where(m => m.Overwatch.Modes.HasAtLeastOneMode(string.Join('-', modeList))).ToList();
+
+            return ladies;
         }
 
         private void Filters(Dictionary<string, string> filters)

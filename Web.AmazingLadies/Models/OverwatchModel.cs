@@ -92,6 +92,7 @@ namespace Web.AmazingLadies.Models
 
         public bool HasAtLeastOneRole(string RoleList)
         {
+            //DPS-TANK-SUPPORT
             if (RoleList.Contains("DPS") && DPS)
                 return true;
             if (RoleList.Contains("TANK") && Tank)
@@ -112,7 +113,7 @@ namespace Web.AmazingLadies.Models
 
         public bool HasAtLeastOneMode(string ModeList)
         {
-            //Comp-Quick-Arcade
+            //COMP-QUICK-ARCADE
             if (ModeList.Contains("COMP") && Competitive)
                 return true;
             if (ModeList.Contains("QUICK") && Quick)
