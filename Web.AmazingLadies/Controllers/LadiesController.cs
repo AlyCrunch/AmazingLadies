@@ -6,70 +6,78 @@ using Microsoft.AspNetCore.Mvc;
 using Web.AmazingLadies.Models;
 using Web.AmazingLadies.Enums;
 using Web.AmazingLadies.Helpers.APIs.SunDwarf;
+using Web.AmazingLadies.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Web.AmazingLadies.Controllers
 {
     public class LadiesController : Controller
     {
         OverwatchAPI OWAPI;
+        private readonly ALOContext _context;
 
-        public LadiesController()
+        public LadiesController(ALOContext context)
         {
+            _context = context;
             OWAPI = new OverwatchAPI();
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index(string sortOrder, string serverString, string roleString, string modeString)
         {
-            var ladies = GetLadiesSample();
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["SRSortParam"] = sortOrder == "SR" ? "SR_desc" : "SR";
+            ViewData["servFilter"] = serverString;
+            ViewData["roleFilter"] = roleString;
+            ViewData["modeFilter"] = modeString;
+            
+            var ladies = _context.Ladies
+                                 .Include(l => l.Overwatch)
+                                    .ThenInclude(o => o.BattleTag)
+                                 .Include(l => l.Overwatch)
+                                    .ThenInclude(o => o.Modes)
+                                 .Include(l => l.Overwatch)
+                                    .ThenInclude(o => o.Rank)
+                                 .Include(l => l.Overwatch)
+                                    .ThenInclude(o => o.Roles)
+                                 .ToList();
 
-            //ladies = await UpdateLadies(ladies);
+            if (!String.IsNullOrEmpty(serverString))
+            {
+                ladies = ladies.Where(s => serverString.ToUpper().Contains(s.Overwatch.Server.ToString().ToUpper())).ToList();
+            }
 
-            ViewData["Ladies"] = ladies;
-            return View();
+            if (!String.IsNullOrEmpty(roleString))
+            {
+                ladies = ladies.Where(s => s.Overwatch.Roles.HasAtLeastOneRole(roleString.ToUpper())).ToList();
+            }
+
+            if (!String.IsNullOrEmpty(modeString))
+            {
+                ladies = ladies.Where(s => s.Overwatch.Modes.HasAtLeastOneMode(modeString.ToUpper())).ToList();
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    ladies = ladies.OrderByDescending(s => s.Overwatch.Rank.SR).ToList();
+                    break;
+                case "SR":
+                    ladies = ladies.OrderBy(s => s.Overwatch.Rank.SR).ToList();
+                    break;
+                case "SR_desc":
+                    ladies = ladies.OrderByDescending(s => s.Nickname).ToList();
+                    break;
+                default:
+                    ladies = ladies.OrderBy(s => s.Nickname).ToList();
+                    break;
+            }
+
+            return View(ladies);
         }
 
         public IActionResult Create()
         {
             return View();
-        }
-
-
-        private List<LadyModel> GetLadiesSample()
-        {
-            return new List<LadyModel>()
-            {
-                new LadyModel()
-                {
-                    ID = 1,
-                    Nickname = "Crunch",
-                    Discord = new Discord(){ Name = "Crunchy", Tag = 2554},
-                    TimeZone = TimeZoneInfo.Local,
-                    Overwatch = new OverwatchModel()
-                    {
-                        BattleTag = new BattleTag(){ Name = "Crunch", Tag = 2210 },
-                        Rank = new Rank(){ SR = 2800 },
-                        Server = ServersEnum.EU,
-                        Modes = new ModesModel(){ Competitive = true, Arcade = true, Quick= true },
-                        Roles = new RolesModel(){ DPS = false, Support = true, Tank = false },
-                        Notes = "Loves playing Ana"
-                    }                    
-                },
-                new LadyModel()
-                {
-                    ID = 2,
-                    Nickname = "QueenE",
-                    Discord = new Discord(){ Name = "QueenE", Tag = 8106},
-                    Overwatch = new OverwatchModel()
-                    {
-                        BattleTag = new BattleTag(){ Name = "QueenE", Tag = 2813 },
-                        Rank = new Rank(){ SR = 3600 },
-                        Server = ServersEnum.EU,
-                        Modes = new ModesModel(){ Competitive = true, Arcade = false, Quick= true },
-                        Roles = new RolesModel(){ DPS = true, Support = true, Tank = true },
-                        Notes = "Loves Pizza"
-                    }
-                }
-            };
         }
 
         private async Task<List<LadyModel>> UpdateLadies(List<LadyModel> ladies)
@@ -80,11 +88,11 @@ namespace Web.AmazingLadies.Controllers
                 if (obj == null) return ladies;
                 var stats = new OverallStats();
 
-                switch(lady.Overwatch.Server.ToString())
+                switch (lady.Overwatch.Server.ToString())
                 {
-                    case "EU": stats = obj.EU.Stats.Competitive.OverallStats;break;
-                    case "US": stats = obj.US.Stats.Competitive.OverallStats;break;
-                    case "KR": stats = obj.KR.Stats.Competitive.OverallStats;break;
+                    case "EU": stats = obj.EU.Stats.Competitive.OverallStats; break;
+                    case "US": stats = obj.US.Stats.Competitive.OverallStats; break;
+                    case "KR": stats = obj.KR.Stats.Competitive.OverallStats; break;
                 }
 
                 lady.Overwatch.Rank.SR = stats.SR;

@@ -64,3 +64,21 @@ fieldset.scheduler-border {
     padding: 0 1.4em 1.4em 1.4em;
     margin: 0 0 1.5em 0;
 }
+
+.AccountNameInput {
+    width: 75% !important;
+}
+
+.AccountTagInput {
+    width: 25% !important;
+}
+
+@media (min-width: 0px) and (max-width: 979px) {
+    .AccountNameInput {
+        width: 100% !important;
+    }
+
+    .AccountTagInput {
+        width: 100% !important;
+    }
+}

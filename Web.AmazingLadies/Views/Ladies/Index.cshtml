@@ -2,19 +2,165 @@
 @{
     ViewData["Title"] = "Amazing Ladies Overwatch";
 }
+<div id="accordion" role="tablist">
+    <div class="card">
+        <div class="card-header" role="tab" id="headingOne">
+            <a data-toggle="collapse" href="#collapseFilter" aria-expanded="true" aria-controls="collapseFilter">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="title">Filters</h5>
+                    </div>
+                    <div class="col text-right">
+                        <p id="RecapFilters"></p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div id="collapseFilter" class="collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="BattleNetAccount">Server</label><br />
+                            <div class="btn-group" data-toggle="buttons" aria-describedby="ServerHelp">
+                                <label class="btn btn-secondary">
+                                    <input type="checkbox" name="options" id="USckb" autocomplete="off"> US
+                                </label>
+                                <label class="btn btn-secondary">
+                                    <input type="checkbox" name="options" id="EUckb" autocomplete="off"> EU
+                                </label>
+                                <label class="btn btn-secondary">
+                                    <input type="checkbox" name="options" id="KRckb" autocomplete="off"> KR
+                                </label>
+                            </div>
+                        </div>
+                        <script>
+                                $("#USckb").bind('change', function () {
+                                    makeListServer();
+                                });
+                                $("#EUckb").bind('change', function () {
+                                    makeListServer();
+                                });
+                                $("#KRckb").bind('change', function () {
+                                    makeListServer();
+                                });
+
+                                function makeListServer() {
+                                    var listS = [];
+                                    if ($("#USckb").prop('checked')) listS.push('US')
+                                    if ($("#EUckb").prop('checked')) listS.push('EU')
+                                    if ($("#KRckb").prop('checked')) listS.push('KR')
+                                    $("#srvStr").val(listS.join('-'));
+                                }
+
+                        </script>
+                    </div>
+                    <div class="col">
+                        <label for="BattleNetAccount">Role(s)</label><br />
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-secondary">
+                                <input type="checkbox" name="options" id="DPSckb" autocomplete="off"> DPS
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="checkbox" name="options" id="Tankckb" autocomplete="off"> Tank
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="checkbox" name="options" id="Supportckb" autocomplete="off"> Support
+                            </label>
+                        </div>
+                        <script>
+                                $("#DPSckb").bind('change', function () {
+                                    makeListRoles();
+                                });
+                                $("#Tankckb").bind('change', function () {
+                                    makeListRoles();
+                                });
+                                $("#Supportckb").bind('change', function () {
+                                    makeListRoles();
+                                });
+
+                                function makeListRoles() {
+                                    var listR = [];
+                                    if ($("#DPSckb").prop('checked')) listR.push('DPS')
+                                    if ($("#Tankckb").prop('checked')) listR.push('Tank')
+                                    if ($("#Supportckb").prop('checked')) listR.push('Support')
+                                    $("#roleStr").val(listR.join('-'));
+                                }
+                        </script>
+
+                    </div>
+                    <div class="col">
+                        <label for="BattleNetAccount">Mode(s)</label><br />
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-secondary">
+                                <input type="checkbox" name="options" id="compckb" autocomplete="off"> Competitive
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="checkbox" name="options" id="quickcbk" autocomplete="off"> Quick
+                            </label>
+                            <label class="btn btn-secondary">
+                                <input type="checkbox" name="options" id="arcadeckb" autocomplete="off"> Arcade
+                            </label>
+                        </div>
+                        <script>
+                                $("#compckb").bind('change', function () {
+                                    makeListModes();
+                                });
+                                $("#quickcbk").bind('change', function () {
+                                    makeListModes();
+                                });
+                                $("#arcadeckb").bind('change', function () {
+                                    makeListModes();
+                                });
+
+                                function makeListModes() {
+                                    var listM = [];
+                                    if ($("#compckb").prop('checked')) listM.push('Comp')
+                                    if ($("#quickcbk").prop('checked')) listM.push('Quick')
+                                    if ($("#arcadeckb").prop('checked')) listM.push('Arcade')
+                                    $("#modeStr").val(listM.join('-'));
+                                }
+                        </script>
+                    </div>
+                </div>
+                <hr>
+                <script>
+                                $(document).ready(function () {
+                                    if ($('#srvStr').val() != "" || $('#roleStr').val() != "" || $('#modeStr').val() != "")
+                                        $('#collapseFilter').addClass('show');
+                                });
+
+                                function setServers(servers)
+                                {
+
+                                }
+                </script>
+                <form asp-action="Index" method="get">
+                    <input id="srvStr" name="serverString" type="hidden" value="@ViewData["servFilter"]" />
+                    <input id="roleStr" name="roleString" type="hidden" value="@ViewData["roleFilter"]" />
+                    <input id="modeStr" name="modeString" type="hidden" value="@ViewData["modeFilter"]" />
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Go</button>
+                        <button type="button" class="btn btn-secondary">Reset filters</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <table class="table">
     <thead>
         <tr>
             <th>
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Nickname)
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model => model.Nickname) </a>
             </th>
             <th>
                 BattleTag
             </th>
             <th>
-                Season Rating
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["SRSortParam"]">Season Rating</a>
             </th>
             <th>
                 Roles
@@ -25,49 +171,49 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var lady in ViewData["Ladies"] as List<LadyModel>)
+        @foreach (var lady in Model as List<LadyModel>)
         {
-            <tr>
-                <td>
-                    <span>@Html.Partial("~/Content/Icons/Details.cshtml")</span>
-                </td>
-                <td>
-                    @if (!string.IsNullOrEmpty(lady.Overwatch.Avatar))
+        <tr>
+            <td>
+                <span class="role">@Html.Partial("~/Content/Icons/Details.cshtml")</span>
+            </td>
+            <td>
+                @if (!string.IsNullOrEmpty(lady.Overwatch.Avatar))
                     {
-                        <img src="@Url.Content(lady.Overwatch.Avatar)" class="avatarList rounded-circle" />
+                <img src="@Url.Content(lady.Overwatch.Avatar)" class="avatarList rounded-circle" />
                     }
-                    @Html.DisplayFor(modelItem => lady.Nickname)
-                </td>
-                <td>
-                    <a href="@Html.Raw(lady.Overwatch.GetPlayOverwatchUrl())" target="_blank"> @Html.DisplayName(lady.Overwatch.BattleTag.Full) </a>
-                </td>
-                <td>
-                    <img class="rankImg" src="@Url.Content(lady.Overwatch.Rank.Image)" alt="@Html.Raw(lady.Overwatch.Rank.Name)" />
-                    @Html.DisplayFor(modelItem => lady.Overwatch.Rank.SR)
-                </td>
-                <td>
-                    <span class="role @if (lady.Overwatch.Roles.DPS) { @Html.Raw("activeIcon") }">
-                        @Html.Partial("~/Content/Icons/DPS.cshtml")
-                    </span>
-                    <span class="role @if (lady.Overwatch.Roles.Tank) { @Html.Raw("activeIcon") }">
-                        @Html.Partial("~/Content/Icons/Tank.cshtml")
-                    </span>
-                    <span class="role @if (lady.Overwatch.Roles.Support) { @Html.Raw("activeIcon") }">
-                        @Html.Partial("~/Content/Icons/Support.cshtml")
-                    </span>
-                </td>
-                <td>
-                    <span class="role @if (lady.Overwatch.Modes.Competitive) { @Html.Raw("activeIcon") }">
-                        @Html.Partial("~/Content/Icons/Competitive.cshtml")
-                    </span>
-                    <span class="role @if (lady.Overwatch.Modes.Quick) { @Html.Raw("activeIcon") }">
-                        @Html.Partial("~/Content/Icons/Quick.cshtml")
-                    </span>
-                    <span class="role @if (lady.Overwatch.Modes.Arcade) { @Html.Raw("activeIcon") }">
-                        @Html.Partial("~/Content/Icons/Arcade.cshtml")
-                    </span>
-                </td>
-            </tr>
+                @Html.DisplayFor(modelItem => lady.Nickname)
+            </td>
+            <td>
+                <a href="@Html.Raw(lady.Overwatch.GetPlayOverwatchUrl())" target="_blank"> @Html.DisplayName(lady.Overwatch.BattleTag.Full) </a>
+            </td>
+            <td>
+                <img class="rankImg" src="@Url.Content(lady.Overwatch.Rank.Image)" alt="@Html.Raw(lady.Overwatch.Rank.Name)" />
+                @Html.DisplayFor(modelItem => lady.Overwatch.Rank.SR)
+            </td>
+            <td>
+                <span class="role @if (lady.Overwatch.Roles.DPS) { @Html.Raw("activeIcon") }">
+                    @Html.Partial("~/Content/Icons/DPS.cshtml")
+                </span>
+                <span class="role @if (lady.Overwatch.Roles.Tank) { @Html.Raw("activeIcon") }">
+                    @Html.Partial("~/Content/Icons/Tank.cshtml")
+                </span>
+                <span class="role @if (lady.Overwatch.Roles.Support) { @Html.Raw("activeIcon") }">
+                    @Html.Partial("~/Content/Icons/Support.cshtml")
+                </span>
+            </td>
+            <td>
+                <span class="role @if (lady.Overwatch.Modes.Competitive) { @Html.Raw("activeIcon") }">
+                    @Html.Partial("~/Content/Icons/Competitive.cshtml")
+                </span>
+                <span class="role @if (lady.Overwatch.Modes.Quick) { @Html.Raw("activeIcon") }">
+                    @Html.Partial("~/Content/Icons/Quick.cshtml")
+                </span>
+                <span class="role @if (lady.Overwatch.Modes.Arcade) { @Html.Raw("activeIcon") }">
+                    @Html.Partial("~/Content/Icons/Arcade.cshtml")
+                </span>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
