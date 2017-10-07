@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Web.AmazingLadies.Models.LadyModel>
+﻿@using Web.AmazingLadies.Enums;
+@model Web.AmazingLadies.Controllers.LadySearchViewModel
 @{
     ViewData["Title"] = "Amazing Ladies Overwatch";
 }
@@ -16,7 +17,7 @@
                 </div>
             </a>
         </div>
-        <div id="collapseFilter" class="collapse @ViewData["HasFilter"]" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+        <div id="collapseFilter" class="collapse @(Model.Filter.HasFilter ? "show" : "" )" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body">
                 <form asp-action="Index" method="get">
                     <div class="row">
@@ -24,14 +25,14 @@
                             <div class="form-group">
                                 <label for="BattleNetAccount">Server</label><br />
                                 <div class="btn-group" data-toggle="buttons" aria-describedby="ServerHelp">
-                                    <label class="btn btn-secondary @ViewData["s-u_c"]">
-                                        <input type="checkbox" name="filters[s-u]" id="USckb" autocomplete="off" @ViewData["s-u"]> US
+                                    <label class="btn btn-secondary @(Model.Filter.Servers.Contains(ServersEnum.US) ? "active" : "")">
+                                        <input type="checkbox" name="filters[s-u]" id="USckb" autocomplete="off" @(Model.Filter.Servers.Contains(ServersEnum.US) ? "checked" : "")> US
                                     </label>
-                                    <label class="btn btn-secondary @ViewData["s-e_c"]">
-                                        <input type="checkbox" name="filters[s-e]" id="EUckb" autocomplete="off" @ViewData["s-e"]> EU
+                                    <label class="btn btn-secondary @(Model.Filter.Servers.Contains(ServersEnum.EU) ? "active" : "")">
+                                        <input type="checkbox" name="filters[s-e]" id="EUckb" autocomplete="off" @(Model.Filter.Servers.Contains(ServersEnum.EU) ? "checked" : "")> EU
                                     </label>
-                                    <label class="btn btn-secondary @ViewData["s-k_c"]">
-                                        <input type="checkbox" name="filters[s-k]" id="KRckb" autocomplete="off" @ViewData["s-k"]> KR
+                                    <label class="btn btn-secondary @(Model.Filter.Servers.Contains(ServersEnum.KR) ? "active" : "")">
+                                        <input type="checkbox" name="filters[s-k]" id="KRckb" autocomplete="off" @(Model.Filter.Servers.Contains(ServersEnum.KR) ? "checked" : "")> KR
                                     </label>
                                 </div>
                             </div>
@@ -39,28 +40,28 @@
                         <div class="col">
                             <label for="BattleNetAccount">Role(s)</label><br />
                             <div class="btn-group" data-toggle="buttons">
-                                <label class="btn btn-secondary @ViewData["r-d_c"]">
-                                    <input type="checkbox" name="filters[r-d]" id="DPSckb" autocomplete="off" @ViewData["r-d"]> DPS
+                                <label class="btn btn-secondary @(Model.Filter.Roles.Contains(RolesEnum.DPS) ? "active" : "")">
+                                    <input type="checkbox" name="filters[r-d]" id="DPSckb" autocomplete="off" @(Model.Filter.Roles.Contains(RolesEnum.DPS) ? "checked" : "")> DPS
                                 </label>
-                                <label class="btn btn-secondary @ViewData["r-t_c"]">
-                                    <input type="checkbox" name="filters[r-t]" id="Tankckb" autocomplete="off" @ViewData["r-t"]> Tank
+                                <label class="btn btn-secondary @(Model.Filter.Roles.Contains(RolesEnum.Tank) ? "active" : "")">
+                                    <input type="checkbox" name="filters[r-t]" id="Tankckb" autocomplete="off" @(Model.Filter.Roles.Contains(RolesEnum.Tank) ? "checked" : "")> Tank
                                 </label>
-                                <label class="btn btn-secondary @ViewData["r-s_c"]">
-                                    <input type="checkbox" name="filters[r-s]" id="Supportckb" autocomplete="off" @ViewData["r-s"]> Support
+                                <label class="btn btn-secondary @(Model.Filter.Roles.Contains(RolesEnum.Support) ? "active" : "")">
+                                    <input type="checkbox" name="filters[r-s]" id="Supportckb" autocomplete="off" @(Model.Filter.Roles.Contains(RolesEnum.Support) ? "checked" : "")> Support
                                 </label>
                             </div>
                         </div>
                         <div class="col">
                             <label for="BattleNetAccount">Mode(s)</label><br />
                             <div class="btn-group" data-toggle="buttons">
-                                <label class="btn btn-secondary @ViewData["m-c_c"]">
-                                    <input type="checkbox" name="filters[m-c]" id="compckb" autocomplete="off" @ViewData["m-c"]> Competitive
+                                <label class="btn btn-secondary @(Model.Filter.Modes.Contains(ModesEnum.Competitive) ? "active" : "")">
+                                    <input type="checkbox" name="filters[m-c]" id="compckb" autocomplete="off" @(Model.Filter.Modes.Contains(ModesEnum.Competitive) ? "checked" : "")> Competitive
                                 </label>
-                                <label class="btn btn-secondary @ViewData["m-q_c"]">
-                                    <input type="checkbox" name="filters[m-q]" id="quickcbk" autocomplete="off" @ViewData["m-q"]> Quick
+                                <label class="btn btn-secondary @(Model.Filter.Modes.Contains(ModesEnum.Quick) ? "active" : "")">
+                                    <input type="checkbox" name="filters[m-q]" id="quickcbk" autocomplete="off" @(Model.Filter.Modes.Contains(ModesEnum.Quick) ? "checked" : "")> Quick
                                 </label>
-                                <label class="btn btn-secondary @ViewData["m-a_c"]">
-                                    <input type="checkbox" name="filters[m-a]" id="arcadeckb" autocomplete="off" @ViewData["m-a"]> Arcade
+                                <label class="btn btn-secondary @(Model.Filter.Modes.Contains(ModesEnum.Arcade) ? "active" : "")">
+                                    <input type="checkbox" name="filters[m-a]" id="arcadeckb" autocomplete="off" @(Model.Filter.Modes.Contains(ModesEnum.Arcade) ? "active" : "")> Arcade
                                 </label>
                             </div>
                         </div>
@@ -81,7 +82,7 @@
             <th>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.DisplayNameFor(model => model.Nickname) </a>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Nickname</a>
             </th>
             <th>
                 BattleTag
@@ -98,7 +99,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var lady in Model as List<LadyModel>)
+        @foreach (var lady in Model.Ladies as List<LadyModel>)
         {
         <tr>
             <td>

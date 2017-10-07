@@ -24,10 +24,13 @@ namespace Web.AmazingLadies.Controllers
 
         public IActionResult Index(string sortOrder, Dictionary<string, string> filters)
         {
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) || sortOrder == "name" ? "name_desc" : "name";
             ViewData["SRSortParam"] = sortOrder == "SR" ? "SR_desc" : "SR";
 
-            Filters(filters);
+            var ladySearchViewModel = new LadySearchViewModel
+            {
+                Filter = Filters(filters)
+            };
 
             var ladies = _context.Ladies
                                  .Include(l => l.Overwatch)
@@ -58,7 +61,10 @@ namespace Web.AmazingLadies.Controllers
                     break;
             }
 
-            return View(ladies);
+
+            ladySearchViewModel.Ladies = ladies;
+
+            return View(ladySearchViewModel);
         }
 
         public IActionResult Create()
@@ -94,30 +100,36 @@ namespace Web.AmazingLadies.Controllers
             return ladies;
         }
 
-        private void Filters(Dictionary<string, string> filters)
+        private LadyFilter Filters(Dictionary<string, string> filters)
         {
-            ViewData["s-u"] = filters.ContainsKey("s-u") ? "checked" : "";
-            ViewData["s-u_c"] = filters.ContainsKey("s-u") ? "active" : "";
-            ViewData["s-e"] = filters.ContainsKey("s-e") ? "checked" : "";
-            ViewData["s-e_c"] = filters.ContainsKey("s-e") ? "active" : "";
-            ViewData["s-k"] = filters.ContainsKey("s-k") ? "checked" : "";
-            ViewData["s-k_c"] = filters.ContainsKey("s-k") ? "active" : "";
+            var ladyFilter = new LadyFilter();
 
-            ViewData["r-d"] = filters.ContainsKey("r-d") ? "checked" : "";
-            ViewData["r-d_c"] = filters.ContainsKey("r-d") ? "active" : "";
-            ViewData["r-t"] = filters.ContainsKey("r-t") ? "checked" : "";
-            ViewData["r-t_c"] = filters.ContainsKey("r-t") ? "active" : "";
-            ViewData["r-s"] = filters.ContainsKey("r-s") ? "checked" : "";
-            ViewData["r-s_c"] = filters.ContainsKey("r-s") ? "active" : "";
+            if (filters.ContainsKey("s-e"))
+                ladyFilter.Servers.Add(ServersEnum.EU);
+            if (filters.ContainsKey("s-k"))
+                ladyFilter.Servers.Add(ServersEnum.KR);
+            if (filters.ContainsKey("s-u"))
+                ladyFilter.Servers.Add(ServersEnum.US);
 
-            ViewData["m-c"] = filters.ContainsKey("m-c") ? "checked" : "";
-            ViewData["m-c_c"] = filters.ContainsKey("m-c") ? "active" : "";
-            ViewData["m-q"] = filters.ContainsKey("m-q") ? "checked" : "";
-            ViewData["m-q_c"] = filters.ContainsKey("m-q") ? "active" : "";
-            ViewData["m-a"] = filters.ContainsKey("m-a") ? "checked" : "";
-            ViewData["m-a_c"] = filters.ContainsKey("m-a") ? "active" : "";
 
-            ViewData["HasFilter"] = (filters.Count > 0) ? "show" : "";
+            if (filters.ContainsKey("r-d"))
+                ladyFilter.Roles.Add(RolesEnum.DPS);
+            if (filters.ContainsKey("r-t"))
+                ladyFilter.Roles.Add(RolesEnum.Tank);
+            if (filters.ContainsKey("r-s"))
+                ladyFilter.Roles.Add(RolesEnum.Support);
+
+
+            if (filters.ContainsKey("m-c"))
+                ladyFilter.Modes.Add(ModesEnum.Competitive);
+            if (filters.ContainsKey("m-q"))
+                ladyFilter.Modes.Add(ModesEnum.Quick);
+            if (filters.ContainsKey("m-a"))
+                ladyFilter.Modes.Add(ModesEnum.Arcade);
+
+            ladyFilter.HasFilter = filters.Count > 0;
+
+            return ladyFilter;
         }
 
         private async Task<List<LadyModel>> UpdateLadies(List<LadyModel> ladies)
@@ -141,5 +153,26 @@ namespace Web.AmazingLadies.Controllers
             }
             return ladies;
         }
+    }
+
+    public class LadySearchViewModel
+    {
+        public List<LadyModel> Ladies { get; set; }
+        public LadyFilter Filter { get; set; }
+    }
+
+    public class LadyFilter
+    {
+        public LadyFilter()
+        {
+            HasFilter = false;
+            Servers = new List<ServersEnum>();
+            Roles = new List<RolesEnum>();
+            Modes = new List<ModesEnum>();
+        }
+        public bool HasFilter { get; set; }
+        public List<ServersEnum> Servers { get; set; }
+        public List<RolesEnum> Roles { get; set; }
+        public List<ModesEnum> Modes { get; set; }
     }
 }
