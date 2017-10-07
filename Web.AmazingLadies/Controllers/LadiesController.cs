@@ -26,7 +26,9 @@ namespace Web.AmazingLadies.Controllers
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) || sortOrder == "name" ? "name_desc" : "name";
             ViewData["SRSortParam"] = sortOrder == "SR" ? "SR_desc" : "SR";
-
+            
+            if (filters.ContainsKey("sortOrder")) filters.Remove("sortOrder");
+                
             var ladySearchViewModel = new LadySearchViewModel
             {
                 Filter = Filters(filters)
@@ -47,13 +49,13 @@ namespace Web.AmazingLadies.Controllers
 
             switch (sortOrder)
             {
-                case "name_desc":
+                case "SR_desc":
                     ladies = ladies.OrderByDescending(s => s.Overwatch.Rank.SR).ToList();
                     break;
                 case "SR":
                     ladies = ladies.OrderBy(s => s.Overwatch.Rank.SR).ToList();
                     break;
-                case "SR_desc":
+                case "name_desc":
                     ladies = ladies.OrderByDescending(s => s.Nickname).ToList();
                     break;
                 default:
