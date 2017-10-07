@@ -22,14 +22,13 @@ namespace Web.AmazingLadies.Controllers
             OWAPI = new OverwatchAPI();
         }
 
-        public IActionResult Index(string sortOrder, string serverString, string roleString, string modeString)
+        public IActionResult Index(string sortOrder, string serverString, string roleString, Dictionary<string, string> filters)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["SRSortParam"] = sortOrder == "SR" ? "SR_desc" : "SR";
-            ViewData["servFilter"] = serverString;
-            ViewData["roleFilter"] = roleString;
-            ViewData["modeFilter"] = modeString;
-            
+
+            Filters(filters);
+
             var ladies = _context.Ladies
                                  .Include(l => l.Overwatch)
                                     .ThenInclude(o => o.BattleTag)
@@ -40,21 +39,6 @@ namespace Web.AmazingLadies.Controllers
                                  .Include(l => l.Overwatch)
                                     .ThenInclude(o => o.Roles)
                                  .ToList();
-
-            if (!String.IsNullOrEmpty(serverString))
-            {
-                ladies = ladies.Where(s => serverString.ToUpper().Contains(s.Overwatch.Server.ToString().ToUpper())).ToList();
-            }
-
-            if (!String.IsNullOrEmpty(roleString))
-            {
-                ladies = ladies.Where(s => s.Overwatch.Roles.HasAtLeastOneRole(roleString.ToUpper())).ToList();
-            }
-
-            if (!String.IsNullOrEmpty(modeString))
-            {
-                ladies = ladies.Where(s => s.Overwatch.Modes.HasAtLeastOneMode(modeString.ToUpper())).ToList();
-            }
 
             switch (sortOrder)
             {
@@ -78,6 +62,32 @@ namespace Web.AmazingLadies.Controllers
         public IActionResult Create()
         {
             return View();
+        }
+
+        private void Filters(Dictionary<string, string> filters)
+        {
+            ViewData["s-u"] = filters.ContainsKey("s-u") ? "checked" : "";
+            ViewData["s-u_c"] = filters.ContainsKey("s-u") ? "active" : "";
+            ViewData["s-e"] = filters.ContainsKey("s-e") ? "checked" : "";
+            ViewData["s-e_c"] = filters.ContainsKey("s-e") ? "active" : "";
+            ViewData["s-k"] = filters.ContainsKey("s-k") ? "checked" : "";
+            ViewData["s-k_c"] = filters.ContainsKey("s-k") ? "active" : "";
+
+            ViewData["r-d"] = filters.ContainsKey("r-d") ? "checked" : "";
+            ViewData["r-d_c"] = filters.ContainsKey("r-d") ? "active" : "";
+            ViewData["r-t"] = filters.ContainsKey("r-t") ? "checked" : "";
+            ViewData["r-t_c"] = filters.ContainsKey("r-t") ? "active" : "";
+            ViewData["r-s"] = filters.ContainsKey("r-s") ? "checked" : "";
+            ViewData["r-s_c"] = filters.ContainsKey("r-s") ? "active" : "";
+
+            ViewData["m-c"] = filters.ContainsKey("m-c") ? "checked" : "";
+            ViewData["m-c_c"] = filters.ContainsKey("m-c") ? "active" : "";
+            ViewData["m-q"] = filters.ContainsKey("m-q") ? "checked" : "";
+            ViewData["m-q_c"] = filters.ContainsKey("m-q") ? "active" : "";
+            ViewData["m-a"] = filters.ContainsKey("m-a") ? "checked" : "";
+            ViewData["m-a_c"] = filters.ContainsKey("m-a") ? "active" : "";
+
+            ViewData["HasFilter"] = (filters.Count > 0) ? "show" : "";
         }
 
         private async Task<List<LadyModel>> UpdateLadies(List<LadyModel> ladies)

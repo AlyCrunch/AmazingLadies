@@ -16,129 +16,56 @@
                 </div>
             </a>
         </div>
-        <div id="collapseFilter" class="collapse" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+        <div id="collapseFilter" class="collapse @ViewData["HasFilter"]" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <label for="BattleNetAccount">Server</label><br />
-                            <div class="btn-group" data-toggle="buttons" aria-describedby="ServerHelp">
-                                <label class="btn btn-secondary">
-                                    <input type="checkbox" name="options" id="USckb" autocomplete="off"> US
+                <form asp-action="Index" method="get">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="BattleNetAccount">Server</label><br />
+                                <div class="btn-group" data-toggle="buttons" aria-describedby="ServerHelp">
+                                    <label class="btn btn-secondary @ViewData["s-u_c"]">
+                                        <input type="checkbox" name="filters[s-u]" id="USckb" autocomplete="off" @ViewData["s-u"]> US
+                                    </label>
+                                    <label class="btn btn-secondary @ViewData["s-e_c"]">
+                                        <input type="checkbox" name="filters[s-e]" id="EUckb" autocomplete="off" @ViewData["s-e"]> EU
+                                    </label>
+                                    <label class="btn btn-secondary @ViewData["s-k_c"]">
+                                        <input type="checkbox" name="filters[s-k]" id="KRckb" autocomplete="off" @ViewData["s-k"]> KR
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label for="BattleNetAccount">Role(s)</label><br />
+                            <div class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-secondary @ViewData["r-d_c"]">
+                                    <input type="checkbox" name="filters[r-d]" id="DPSckb" autocomplete="off" @ViewData["r-d"]> DPS
                                 </label>
-                                <label class="btn btn-secondary">
-                                    <input type="checkbox" name="options" id="EUckb" autocomplete="off"> EU
+                                <label class="btn btn-secondary @ViewData["r-t_c"]">
+                                    <input type="checkbox" name="filters[r-t]" id="Tankckb" autocomplete="off" @ViewData["r-t"]> Tank
                                 </label>
-                                <label class="btn btn-secondary">
-                                    <input type="checkbox" name="options" id="KRckb" autocomplete="off"> KR
+                                <label class="btn btn-secondary @ViewData["r-s_c"]">
+                                    <input type="checkbox" name="filters[r-s]" id="Supportckb" autocomplete="off" @ViewData["r-s"]> Support
                                 </label>
                             </div>
                         </div>
-                        <script>
-                                $("#USckb").bind('change', function () {
-                                    makeListServer();
-                                });
-                                $("#EUckb").bind('change', function () {
-                                    makeListServer();
-                                });
-                                $("#KRckb").bind('change', function () {
-                                    makeListServer();
-                                });
-
-                                function makeListServer() {
-                                    var listS = [];
-                                    if ($("#USckb").prop('checked')) listS.push('US')
-                                    if ($("#EUckb").prop('checked')) listS.push('EU')
-                                    if ($("#KRckb").prop('checked')) listS.push('KR')
-                                    $("#srvStr").val(listS.join('-'));
-                                }
-
-                        </script>
-                    </div>
-                    <div class="col">
-                        <label for="BattleNetAccount">Role(s)</label><br />
-                        <div class="btn-group" data-toggle="buttons">
-                            <label class="btn btn-secondary">
-                                <input type="checkbox" name="options" id="DPSckb" autocomplete="off"> DPS
-                            </label>
-                            <label class="btn btn-secondary">
-                                <input type="checkbox" name="options" id="Tankckb" autocomplete="off"> Tank
-                            </label>
-                            <label class="btn btn-secondary">
-                                <input type="checkbox" name="options" id="Supportckb" autocomplete="off"> Support
-                            </label>
+                        <div class="col">
+                            <label for="BattleNetAccount">Mode(s)</label><br />
+                            <div class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-secondary @ViewData["m-c_c"]">
+                                    <input type="checkbox" name="filters[m-c]" id="compckb" autocomplete="off" @ViewData["m-c"]> Competitive
+                                </label>
+                                <label class="btn btn-secondary @ViewData["m-q_c"]">
+                                    <input type="checkbox" name="filters[m-q]" id="quickcbk" autocomplete="off" @ViewData["m-q"]> Quick
+                                </label>
+                                <label class="btn btn-secondary @ViewData["m-a_c"]">
+                                    <input type="checkbox" name="filters[m-a]" id="arcadeckb" autocomplete="off" @ViewData["m-a"]> Arcade
+                                </label>
+                            </div>
                         </div>
-                        <script>
-                                $("#DPSckb").bind('change', function () {
-                                    makeListRoles();
-                                });
-                                $("#Tankckb").bind('change', function () {
-                                    makeListRoles();
-                                });
-                                $("#Supportckb").bind('change', function () {
-                                    makeListRoles();
-                                });
-
-                                function makeListRoles() {
-                                    var listR = [];
-                                    if ($("#DPSckb").prop('checked')) listR.push('DPS')
-                                    if ($("#Tankckb").prop('checked')) listR.push('Tank')
-                                    if ($("#Supportckb").prop('checked')) listR.push('Support')
-                                    $("#roleStr").val(listR.join('-'));
-                                }
-                        </script>
-
                     </div>
-                    <div class="col">
-                        <label for="BattleNetAccount">Mode(s)</label><br />
-                        <div class="btn-group" data-toggle="buttons">
-                            <label class="btn btn-secondary">
-                                <input type="checkbox" name="options" id="compckb" autocomplete="off"> Competitive
-                            </label>
-                            <label class="btn btn-secondary">
-                                <input type="checkbox" name="options" id="quickcbk" autocomplete="off"> Quick
-                            </label>
-                            <label class="btn btn-secondary">
-                                <input type="checkbox" name="options" id="arcadeckb" autocomplete="off"> Arcade
-                            </label>
-                        </div>
-                        <script>
-                                $("#compckb").bind('change', function () {
-                                    makeListModes();
-                                });
-                                $("#quickcbk").bind('change', function () {
-                                    makeListModes();
-                                });
-                                $("#arcadeckb").bind('change', function () {
-                                    makeListModes();
-                                });
-
-                                function makeListModes() {
-                                    var listM = [];
-                                    if ($("#compckb").prop('checked')) listM.push('Comp')
-                                    if ($("#quickcbk").prop('checked')) listM.push('Quick')
-                                    if ($("#arcadeckb").prop('checked')) listM.push('Arcade')
-                                    $("#modeStr").val(listM.join('-'));
-                                }
-                        </script>
-                    </div>
-                </div>
-                <hr>
-                <script>
-                                $(document).ready(function () {
-                                    if ($('#srvStr').val() != "" || $('#roleStr').val() != "" || $('#modeStr').val() != "")
-                                        $('#collapseFilter').addClass('show');
-                                });
-
-                                function setServers(servers)
-                                {
-
-                                }
-                </script>
-                <form asp-action="Index" method="get">
-                    <input id="srvStr" name="serverString" type="hidden" value="@ViewData["servFilter"]" />
-                    <input id="roleStr" name="roleString" type="hidden" value="@ViewData["roleFilter"]" />
-                    <input id="modeStr" name="modeString" type="hidden" value="@ViewData["modeFilter"]" />
+                    <hr>
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary">Go</button>
                         <button type="button" class="btn btn-secondary">Reset filters</button>
