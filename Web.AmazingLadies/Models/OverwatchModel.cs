@@ -1,5 +1,6 @@
 ﻿using Web.AmazingLadies.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace Web.AmazingLadies.Models
 {
@@ -90,14 +91,13 @@ namespace Web.AmazingLadies.Models
         public bool DPS { get; set; }
         public bool Tank { get; set; }
 
-        public bool HasAtLeastOneRole(string RoleList)
+        public bool HasAtLeastOneRole(List<RolesEnum> Roles)
         {
-            //DPS-TANK-SUPPORT
-            if (RoleList.Contains("DPS") && DPS)
+            if (Roles.Contains(RolesEnum.DPS) && DPS)
                 return true;
-            if (RoleList.Contains("TANK") && Tank)
+            if (Roles.Contains(RolesEnum.Tank) && Tank)
                 return true;
-            if (RoleList.Contains("SUPPORT") && Support)
+            if (Roles.Contains(RolesEnum.Support) && Support)
                 return true;
             return false;
         }
@@ -111,14 +111,13 @@ namespace Web.AmazingLadies.Models
         public bool Quick { get; set; }
         public bool Arcade { get; set; }
 
-        public bool HasAtLeastOneMode(string ModeList)
+        public bool HasAtLeastOneMode(List<ModesEnum> Modes)
         {
-            //COMP-QUICK-ARCADE
-            if (ModeList.Contains("COMP") && Competitive)
+            if (Modes.Contains(ModesEnum.Competitive) && Competitive)
                 return true;
-            if (ModeList.Contains("QUICK") && Quick)
+            if (Modes.Contains(ModesEnum.Quick) && Quick)
                 return true;
-            if (ModeList.Contains("ARCADE") && Arcade)
+            if (Modes.Contains(ModesEnum.Arcade) && Arcade)
                 return true;
             return false;
         }

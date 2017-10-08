@@ -3,19 +3,14 @@
 @{
     ViewData["Title"] = "Amazing Ladies Overwatch";
 }
-<div id="accordion" role="tablist">
+<div id="accordion" role="tablist" style="margin:10px 0">
     <div class="card">
         <div class="card-header" role="tab" id="headingOne">
-            <a data-toggle="collapse" href="#collapseFilter" aria-expanded="true" aria-controls="collapseFilter">
-                <div class="row">
-                    <div class="col">
-                        <h5 class="title">Filters</h5>
-                    </div>
-                    <div class="col text-right">
-                        <p id="RecapFilters"></p>
-                    </div>
-                </div>
-            </a>
+            <h5 class="title">
+                <a data-toggle="collapse" href="#collapseFilter" aria-expanded="true" aria-controls="collapseFilter" class="SortingFilterName">
+                    Filters
+                </a>
+            </h5>
         </div>
         <div id="collapseFilter" class="collapse @(Model.Filter.HasFilter ? "show" : "" )" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
             <div class="card-body">
@@ -82,13 +77,13 @@
             <th>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.Raw(Model.Sorting.NicknameText)</a>
+                <a class="SortingFilterName" asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.Raw(Model.Sorting.NicknameText)</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["BattleTagSortParam"]">@Html.Raw(Model.Sorting.BTText)</a>
+                <a class="SortingFilterName" asp-action="Index" asp-route-sortOrder="@ViewData["BattleTagSortParam"]">@Html.Raw(Model.Sorting.BTText)</a>
             </th>
             <th>
-                <a asp-action="Index" asp-route-sortOrder="@ViewData["SRSortParam"]">@Html.Raw(Model.Sorting.SRText)</a>
+                <a class="SortingFilterName" asp-action="Index" asp-route-sortOrder="@ViewData["SRSortParam"]">@Html.Raw(Model.Sorting.SRText)</a>
             </th>
             <th>
                 Roles

@@ -24,13 +24,13 @@ namespace Web.AmazingLadies.Controllers
 
         public IActionResult Index(string sortOrder, Dictionary<string, string> filters)
         {
+            if (string.IsNullOrEmpty(sortOrder))
+                sortOrder = "name";
+
             ViewData["NameSortParm"] = SortValueByKey("name", sortOrder);
             ViewData["SRSortParam"] = SortValueByKey("SR", sortOrder);
             ViewData["BattleTagSortParam"] = SortValueByKey("BT", sortOrder);
             if (filters.ContainsKey("sortOrder")) filters.Remove("sortOrder");
-
-            if (string.IsNullOrEmpty(sortOrder))
-                sortOrder = "name";
 
             var ladies = _context.Ladies
                                  .Include(l => l.Overwatch)
@@ -102,18 +102,17 @@ namespace Web.AmazingLadies.Controllers
             try
             {
                 if (!Filter.HasFilter) return true;
-
-                var serverList = string.Join('-', Filter.Servers);
+                
                 if (Filter.Servers.Count > 0 && Filter.Servers.Count < 3)
-                    Ladies = Ladies.Where(s => serverList.Contains(s.Overwatch.Server.ToString())).ToList();
+                    Ladies = Ladies.Where(s => Filter.Servers.Contains(s.Overwatch.Server)).ToList();
 
                 var roleList = string.Join('-', Filter.Roles);
                 if (Filter.Roles.Count > 0 && Filter.Roles.Count < 3)
-                    Ladies = Ladies.Where(r => r.Overwatch.Roles.HasAtLeastOneRole(string.Join('-', roleList))).ToList();
+                    Ladies = Ladies.Where(r => r.Overwatch.Roles.HasAtLeastOneRole(Filter.Roles)).ToList();
 
                 var modeList = string.Join('-', Filter.Modes);
                 if (Filter.Modes.Count > 0 && Filter.Modes.Count < 3)
-                    Ladies = Ladies.Where(r => r.Overwatch.Modes.HasAtLeastOneMode(string.Join('-', modeList))).ToList();
+                    Ladies = Ladies.Where(r => r.Overwatch.Modes.HasAtLeastOneMode(Filter.Modes)).ToList();
             }
             catch
             {
