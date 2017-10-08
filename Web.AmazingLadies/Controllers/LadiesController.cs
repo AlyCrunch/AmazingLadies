@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Web.AmazingLadies.Models;
-using Web.AmazingLadies.Enums;
 using Web.AmazingLadies.Helpers.APIs.SunDwarf;
 using Web.AmazingLadies.Data;
 using Microsoft.EntityFrameworkCore;
 using Web.AmazingLadies.ViewModels;
+using Web.AmazingLadies.Helpers;
 
 namespace Web.AmazingLadies.Controllers
 {
@@ -16,7 +16,6 @@ namespace Web.AmazingLadies.Controllers
     {
         OverwatchAPI OWAPI;
         private readonly ALOContext _context;
-        private Dictionary<string, string> _filters;
 
         public LadiesController(ALOContext context)
         {
@@ -26,7 +25,6 @@ namespace Web.AmazingLadies.Controllers
 
         public IActionResult Index(string sortOrder, Dictionary<string, string> filters)
         {
-            _filters = filters;
             if (string.IsNullOrEmpty(sortOrder))
                 sortOrder = "name";
 
@@ -34,7 +32,14 @@ namespace Web.AmazingLadies.Controllers
             ViewData["SRSortParam"] = SortValueByKey("SR", sortOrder);
             ViewData["BattleTagSortParam"] = SortValueByKey("BT", sortOrder);
 
-            if (filters.ContainsKey("sortOrder")) filters.Remove("sortOrder");
+            if (filters.ContainsKey("sortOrder"))
+            {
+                filters.Remove("sortOrder");
+                if (filters.Count > 0)
+                    filters = Utilities.StringToDictionary(filters.First().Value);
+            }
+
+            ViewBag.Filters = Utilities.DictionaryToString(filters);
 
 
             var ladies = _context.Ladies

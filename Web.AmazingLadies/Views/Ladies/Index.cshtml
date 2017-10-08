@@ -77,13 +77,13 @@
             <th>
             </th>
             <th>
-                <a class="SortingFilterName" asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.Raw(Model.Sorting.NicknameText)</a>
+                <a class="SortingFilterName" asp-action="Index" asp-route-test="@ViewBag.Filters" asp-route-sortOrder="@ViewData["NameSortParm"]">@Html.Raw(Model.Sorting.NicknameText)</a>
             </th>
             <th>
-                <a class="SortingFilterName" asp-action="Index" asp-route-sortOrder="@ViewData["BattleTagSortParam"]">@Html.Raw(Model.Sorting.BTText)</a>
+                <a class="SortingFilterName" asp-action="Index" asp-route-test="@ViewBag.Filters" asp-route-sortOrder="@ViewData["BattleTagSortParam"]">@Html.Raw(Model.Sorting.BTText)</a>
             </th>
             <th>
-                <a class="SortingFilterName" asp-action="Index" asp-route-sortOrder="@ViewData["SRSortParam"]">@Html.Raw(Model.Sorting.SRText)</a>
+                <a class="SortingFilterName" asp-action="Index" asp-route-test="@ViewBag.Filters" asp-route-sortOrder="@ViewData["SRSortParam"]">@Html.Raw(Model.Sorting.SRText)</a>
             </th>
             <th>
                 Roles
