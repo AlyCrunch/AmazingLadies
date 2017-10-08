@@ -24,15 +24,13 @@ namespace Web.AmazingLadies.Controllers
 
         public IActionResult Index(string sortOrder, Dictionary<string, string> filters)
         {
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) || sortOrder == "name" ? "name_desc" : "name";
-            ViewData["SRSortParam"] = sortOrder == "SR" ? "SR_desc" : "SR";
-            
+            ViewData["NameSortParm"] = SortValueByKey("name", sortOrder);
+            ViewData["SRSortParam"] = SortValueByKey("SR", sortOrder);
+            ViewData["BattleTagSortParam"] = SortValueByKey("BT", sortOrder);
             if (filters.ContainsKey("sortOrder")) filters.Remove("sortOrder");
-                
-            var ladySearchViewModel = new LadySearchViewModel
-            {
-                Filter = Filters(filters)
-            };
+
+            if (string.IsNullOrEmpty(sortOrder))
+                sortOrder = "name";
 
             var ladies = _context.Ladies
                                  .Include(l => l.Overwatch)
@@ -45,26 +43,10 @@ namespace Web.AmazingLadies.Controllers
                                     .ThenInclude(o => o.Roles)
                                  .ToList();
 
-            ladies = FilteringLadies(filters, ladies);
+            var ladySearchViewModel = new LadySearchViewModel(ladies, filters, sortOrder);
 
-            switch (sortOrder)
-            {
-                case "SR_desc":
-                    ladies = ladies.OrderByDescending(s => s.Overwatch.Rank.SR).ToList();
-                    break;
-                case "SR":
-                    ladies = ladies.OrderBy(s => s.Overwatch.Rank.SR).ToList();
-                    break;
-                case "name_desc":
-                    ladies = ladies.OrderByDescending(s => s.Nickname).ToList();
-                    break;
-                default:
-                    ladies = ladies.OrderBy(s => s.Nickname).ToList();
-                    break;
-            }
-
-
-            ladySearchViewModel.Ladies = ladies;
+            ladySearchViewModel.FilteringLadies();
+            ladySearchViewModel.SortingLadies();
 
             return View(ladySearchViewModel);
         }
@@ -74,64 +56,9 @@ namespace Web.AmazingLadies.Controllers
             return View();
         }
 
-        private List<LadyModel> FilteringLadies(Dictionary<string, string> filters, List<LadyModel> ladies)
+        private string SortValueByKey(string key, string sort)
         {
-            if (filters.Count == 0) return ladies;
-
-            var serverList = new List<string>();
-            if (filters.ContainsKey("s-u")) serverList.Add("US");
-            if (filters.ContainsKey("s-e")) serverList.Add("EU");
-            if (filters.ContainsKey("s-k")) serverList.Add("KR");
-            if (serverList.Count > 0 && serverList.Count < 3)
-                ladies = ladies.Where(s => serverList.Contains(s.Overwatch.Server.ToString())).ToList();
-
-            var roleList = new List<string>();
-            if (filters.ContainsKey("r-d")) roleList.Add("DPS");
-            if (filters.ContainsKey("r-t")) roleList.Add("TANK");
-            if (filters.ContainsKey("r-s")) roleList.Add("SUPPORT");
-            if (roleList.Count > 0 && roleList.Count < 3)
-                ladies = ladies.Where(r => r.Overwatch.Roles.HasAtLeastOneRole(string.Join('-', roleList))).ToList();
-
-            var modeList = new List<string>();
-            if (filters.ContainsKey("m-c")) modeList.Add("COMP");
-            if (filters.ContainsKey("m-q")) modeList.Add("QUICK");
-            if (filters.ContainsKey("m-a")) modeList.Add("ARCADE");
-            if (modeList.Count > 0 && modeList.Count < 3)
-                ladies = ladies.Where(m => m.Overwatch.Modes.HasAtLeastOneMode(string.Join('-', modeList))).ToList();
-
-            return ladies;
-        }
-
-        private LadyFilter Filters(Dictionary<string, string> filters)
-        {
-            var ladyFilter = new LadyFilter();
-
-            if (filters.ContainsKey("s-e"))
-                ladyFilter.Servers.Add(ServersEnum.EU);
-            if (filters.ContainsKey("s-k"))
-                ladyFilter.Servers.Add(ServersEnum.KR);
-            if (filters.ContainsKey("s-u"))
-                ladyFilter.Servers.Add(ServersEnum.US);
-
-
-            if (filters.ContainsKey("r-d"))
-                ladyFilter.Roles.Add(RolesEnum.DPS);
-            if (filters.ContainsKey("r-t"))
-                ladyFilter.Roles.Add(RolesEnum.Tank);
-            if (filters.ContainsKey("r-s"))
-                ladyFilter.Roles.Add(RolesEnum.Support);
-
-
-            if (filters.ContainsKey("m-c"))
-                ladyFilter.Modes.Add(ModesEnum.Competitive);
-            if (filters.ContainsKey("m-q"))
-                ladyFilter.Modes.Add(ModesEnum.Quick);
-            if (filters.ContainsKey("m-a"))
-                ladyFilter.Modes.Add(ModesEnum.Arcade);
-
-            ladyFilter.HasFilter = filters.Count > 0;
-
-            return ladyFilter;
+            return sort == key ? key + "_desc" : key;
         }
 
         private async Task<List<LadyModel>> UpdateLadies(List<LadyModel> ladies)
@@ -161,10 +88,80 @@ namespace Web.AmazingLadies.Controllers
     {
         public List<LadyModel> Ladies { get; set; }
         public LadyFilter Filter { get; set; }
+        public LadySorting Sorting { get; set; }
+
+        public LadySearchViewModel(List<LadyModel> ladies, Dictionary<string, string> filters, string sort)
+        {
+            Ladies = ladies;
+            Filter = new LadyFilter(filters);
+            Sorting = new LadySorting(sort);
+        }
+
+        public bool FilteringLadies()
+        {
+            try
+            {
+                if (!Filter.HasFilter) return true;
+
+                var serverList = string.Join('-', Filter.Servers);
+                if (Filter.Servers.Count > 0 && Filter.Servers.Count < 3)
+                    Ladies = Ladies.Where(s => serverList.Contains(s.Overwatch.Server.ToString())).ToList();
+
+                var roleList = string.Join('-', Filter.Roles);
+                if (Filter.Roles.Count > 0 && Filter.Roles.Count < 3)
+                    Ladies = Ladies.Where(r => r.Overwatch.Roles.HasAtLeastOneRole(string.Join('-', roleList))).ToList();
+
+                var modeList = string.Join('-', Filter.Modes);
+                if (Filter.Modes.Count > 0 && Filter.Modes.Count < 3)
+                    Ladies = Ladies.Where(r => r.Overwatch.Modes.HasAtLeastOneMode(string.Join('-', modeList))).ToList();
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+        public bool SortingLadies()
+        {
+            try
+            {
+                switch (Sorting.SortProperty)
+                {
+                    case "SR_desc":
+                        Ladies = Ladies.OrderByDescending(s => s.Overwatch.Rank.SR).ToList();
+                        break;
+                    case "SR":
+                        Ladies = Ladies.OrderBy(s => s.Overwatch.Rank.SR).ToList();
+                        break;
+                    case "BT_desc":
+                        Ladies = Ladies.OrderByDescending(s => s.Overwatch.BattleTag.Name).ToList();
+                        break;
+                    case "BT":
+                        Ladies = Ladies.OrderBy(s => s.Overwatch.BattleTag.Name).ToList();
+                        break;
+                    case "name_desc":
+                        Ladies = Ladies.OrderByDescending(s => s.Nickname).ToList();
+                        break;
+                    default:
+                        Ladies = Ladies.OrderBy(s => s.Nickname).ToList();
+                        break;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
     }
 
     public class LadyFilter
     {
+        public bool HasFilter { get; set; }
+        public List<ServersEnum> Servers { get; set; }
+        public List<RolesEnum> Roles { get; set; }
+        public List<ModesEnum> Modes { get; set; }
+
         public LadyFilter()
         {
             HasFilter = false;
@@ -172,9 +169,92 @@ namespace Web.AmazingLadies.Controllers
             Roles = new List<RolesEnum>();
             Modes = new List<ModesEnum>();
         }
-        public bool HasFilter { get; set; }
-        public List<ServersEnum> Servers { get; set; }
-        public List<RolesEnum> Roles { get; set; }
-        public List<ModesEnum> Modes { get; set; }
+        public LadyFilter(Dictionary<string, string> filters)
+        {
+            HasFilter = false;
+            Servers = new List<ServersEnum>();
+            Roles = new List<RolesEnum>();
+            Modes = new List<ModesEnum>();
+
+            if (filters.ContainsKey("s-e"))
+                Servers.Add(ServersEnum.EU);
+            if (filters.ContainsKey("s-k"))
+                Servers.Add(ServersEnum.KR);
+            if (filters.ContainsKey("s-u"))
+                Servers.Add(ServersEnum.US);
+
+
+            if (filters.ContainsKey("r-d"))
+                Roles.Add(RolesEnum.DPS);
+            if (filters.ContainsKey("r-t"))
+                Roles.Add(RolesEnum.Tank);
+            if (filters.ContainsKey("r-s"))
+                Roles.Add(RolesEnum.Support);
+
+
+            if (filters.ContainsKey("m-c"))
+                Modes.Add(ModesEnum.Competitive);
+            if (filters.ContainsKey("m-q"))
+                Modes.Add(ModesEnum.Quick);
+            if (filters.ContainsKey("m-a"))
+                Modes.Add(ModesEnum.Arcade);
+
+            HasFilter = filters.Count > 0;
+        }
+
+    }
+    public class LadySorting
+    {
+        public string SortProperty { get; set; }
+        private string _nickname = "Nickname";
+        public string NicknameText
+        {
+            get
+            {
+                if(SortProperty.Contains("name"))
+                {
+                    if (SortProperty.Contains("_desc"))
+                        return $"{_nickname} ▾";
+                    else
+                        return $"{_nickname} ▴";
+                }
+                return _nickname;
+            }
+        }
+        private string _BT = "BattleTag";
+        public string BTText
+        {
+            get
+            {
+                if (SortProperty.Contains("BT"))
+                {
+                    if (SortProperty.Contains("_desc"))
+                        return $"{_BT} ▾";
+                    else
+                        return $"{_BT} ▴";
+                }
+                return _BT;
+            }
+        }
+        private string _SR = "Season Rating";
+        public string SRText
+        {
+            get
+            {
+                if (SortProperty.Contains("SR"))
+                {
+                    if (SortProperty.Contains("_desc"))
+                        return $"{_SR} ▾";
+                    else
+                        return $"{_SR} ▴";
+                }
+                return _SR;
+            }
+        }
+
+        public LadySorting(string sort)
+        {
+            SortProperty = sort;
+        }
     }
 }
